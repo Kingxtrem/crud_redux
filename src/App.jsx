@@ -10,11 +10,15 @@ const App = () => {
   const [up, setUp] = useState(false)
   const handlechange = (e) => {
     setTask(e.target.value)
-    // console.log(task)
   }
   const addTask = () => {
-    dispatch(addtask(task))
-    setTask('')
+    if (task.length == 0) {
+      alert('Please enter a task')
+    }
+    else {
+      dispatch(addtask(task))
+      setTask('')
+    }
     // console.log(tasks)
   }
   const deleteTask = (index) => {
@@ -46,7 +50,7 @@ const App = () => {
               <li className='border border-gray-300 p-2 rounded mt-2 flex justify-between'>
                 <span>{task}</span>
                 <div className='flex justify-evenly gap-6' >
-                  <button className='bg-red-500 text-white p-1 rounded' onClick={(e) => { editTask(index) }}>Edit</button>
+                  <button className='bg-green-500 text-white p-1 rounded' onClick={(e) => { editTask(index) }}>Edit</button>
                   <button className='bg-red-500 text-white p-1 rounded' onClick={(e) => deleteTask(index)}>Delete</button>
                 </div>
               </li>
