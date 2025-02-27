@@ -44,7 +44,7 @@ const App = () => {
       setEmpty(true)
       setTimeout(() => {
         setEmpty(false)
-      }, 5000);
+      }, 1000);
     } else {
       dispatch(addtask(task));
       setTask("");
