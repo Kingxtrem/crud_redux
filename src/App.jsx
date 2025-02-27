@@ -72,7 +72,7 @@ const App = () => {
       <h1 className="text-3xl font-bold text-center text-blue-500">
         TODO LIST
       </h1>
-      <div className="w-[80%] min-h-96 mx-auto mt-5 border border-gray-300 p-5 rounded bg-gray-100">
+      <div className="sm:w-[80%] min-w-fit min-h-96 mx-auto mt-5 border border-gray-300 p-5 rounded bg-gray-100">
         <div className="w-full mx-auto mt-5 flex justify-center gap-5">
           <input
             type="text"
@@ -82,7 +82,7 @@ const App = () => {
             value={task}
           />
           <button
-            className={empty?"w-[15%] text-white rounded p-2 bg-black":"w-[15%] bg-blue-500 text-white rounded p-2 "  }
+            className={empty?"sm:w-[15%] min-w-fit text-white rounded p-2 bg-black flex-nowrap text-nowrap":"sm:w-[15%] min-w-fit bg-blue-500 text-white rounded p-2 flex-nowrap text-nowrap "  }
             onClick={up ? (e) => updateTask(id, task) : addTask} disabled={empty?true:false}
           >
             {up ? "Update Task" : "Add Task"}
