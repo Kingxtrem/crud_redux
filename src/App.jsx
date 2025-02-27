@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addtask, deletetask, updatetask } from "./crud";
-import ReduxApiSetUp from "./components/ReduxApiSetUp";
+// import ReduxApiSetUp from "./components/ReduxApiSetUp";
 import { ToastContainer, toast } from "react-toastify";
 
 const App = () => {
