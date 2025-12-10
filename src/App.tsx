@@ -1,74 +1,87 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { addtask, deletetask, updatetask } from "./crud";
-// import ReduxApiSetUp from "./components/ReduxApiSetUp";
+import { useAppSelector, useAppDispatch } from "./hooks.js";
+import { addTask as addTaskAction, deleteTask as deleteTaskAction, updateTask as updateTaskAction } from "./crud.js";
 import { ToastContainer, toast } from "react-toastify";
 
 const App = () => {
-  const tasks = useSelector((state) => state.crud.value);
-  const dispatch = useDispatch();
-  const [task, setTask] = useState("");
-  const [id, setId] = useState("");
-  const [up, setUp] = useState(false);
-  const [empty, setEmpty] = useState(false);
-  
-  const errorNotify = () =>{
+  const tasks = useAppSelector((state) => state.crud.value);
+  const dispatch = useAppDispatch();
+  const [task, setTask] = useState<string>("");
+  const [id, setId] = useState<number | null>(null);
+  const [up, setUp] = useState<boolean>(false);
+
+  const errorNotify = (): void => {
     toast.error("Please add a ToDo!", {
       position: "top-right",
-      autoClose: 5000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: false,
       pauseOnHover: true,
       draggable: true,
-      progress: undefined,
       theme: "colored",
-     
-    });}
-    const successNotify=()=>{
+    });
+  }
+  const successNotify = (): void => {
     toast.success('ToDo added successfully', {
       position: "top-right",
-      autoClose: 5000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: false,
       pauseOnHover: true,
       draggable: true,
-      progress: undefined,
       theme: "colored",
-      });}
-  const handlechange = (e) => {
+    });
+  }
+  const handlechange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTask(e.target.value);
   };
-  const addTask = () => {
-    if (task.length == 0) {
+  const handleAddTask = () => {
+    if (!task.trim()) {
       errorNotify();
-      setEmpty(true)
-      setTimeout(() => {
-        setEmpty(false)
-      },1000);
-    } else {
-      dispatch(addtask(task));
-      setTask("");
-      successNotify();
+      return;
     }
-    // console.log(tasks)
+    dispatch(addTaskAction(task.trim()));
+    setTask("");
+    successNotify();
   };
-  const deleteTask = (index) => {
-    dispatch(deletetask(index));
+
+  const handleDeleteTask = (index: number): void => {
+    dispatch(deleteTaskAction(index));
   };
-  const editTask = (index) => {
-    setTask(tasks[index]);
+
+  const editTask = (index: number): void => {
+    setTask(tasks[index] ?? "");
     setId(index);
     setUp(true);
   };
-  const updateTask = (index) => {
-    dispatch(updatetask({ index, task }));
+
+  const handleUpdateTask = (): void => {
+    if (!task.trim()) {
+      errorNotify();
+      return;
+    }
+    if (id === null) return;
+    dispatch(updateTaskAction({ index: id, task: task.trim() }));
     setTask("");
-    setId("");
+    setId(null);
     setUp(false);
   };
 
   return (
     <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+
+      />
       <h1 className="text-3xl font-bold text-center text-blue-500">
         TODO LIST
       </h1>
@@ -82,30 +95,19 @@ const App = () => {
             value={task}
           />
           <button
-            className={empty?"sm:w-[15%] min-w-fit text-white rounded p-2 bg-black flex-nowrap text-nowrap":"sm:w-[15%] min-w-fit bg-blue-500 text-white rounded p-2 flex-nowrap text-nowrap "  }
-            onClick={up ? (e) => updateTask(id, task) : addTask} disabled={empty?true:false}
+            className={"sm:w-[15%] min-w-fit bg-blue-500 text-white rounded p-2 flex-nowrap text-nowrap"}
+            onClick={up ? handleUpdateTask : handleAddTask}
+            disabled={!task.trim()}
           >
             {up ? "Update Task" : "Add Task"}
           </button>
-          <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick={false}
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-            
-          />
+
         </div>
-        {tasks.map((task, index) => {
+        {tasks.map((taskItem: string, index: number) => {
           return (
             <ul className="mt-5" key={index}>
               <li className="border border-gray-300 p-2 rounded mt-2 flex justify-between">
-                <span>{task}</span>
+                <span>{taskItem}</span>
                 <div className="flex justify-evenly gap-6">
                   <button
                     className="bg-green-500 text-white p-1 rounded"
@@ -117,7 +119,7 @@ const App = () => {
                   </button>
                   <button
                     className="bg-red-500 text-white p-1 rounded"
-                    onClick={(e) => deleteTask(index)}
+                    onClick={(e) => handleDeleteTask(index)}
                   >
                     Delete
                   </button>
@@ -127,7 +129,6 @@ const App = () => {
           );
         })}
       </div>
-      {/* <ReduxApiSetUp/> */}
     </div>
   );
 };
